@@ -125,10 +125,10 @@ def talk(pepper1, pepper2, pepper3, talking_pairs, user_input) -> None:
     Returns:
     None
     """
-    if user_input == "Все":
+    if user_input == "All":
         print("All Robots are talking")
 
-    elif user_input != "Все":
+    elif user_input != "All":
         robot1, robot2 = map(int, user_input.split(' and '))
         print(f"Robots {robot1} and {robot2} talk.")
 
