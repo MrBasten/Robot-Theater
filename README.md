@@ -32,4 +32,5 @@ conda activate pybullet_env
 python nao_color_suits.py
 ```
 
-![image](https://github.com/MrBasten/Robot-Theater/tree/main/img/env_robots.PNG)
+![env_robots](https://github.com/MrBasten/Robot-Theater/assets/69163582/635c9070-8261-4113-8f93-7089482c5fe5)
+
