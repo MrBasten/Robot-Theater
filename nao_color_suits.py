@@ -8,6 +8,16 @@ from qibullet import PepperVirtual
 
 
 def calculate_robot_moves(robot, robot_2) -> None:
+    """
+    Calculates and sets the new position for robot1 to move towards robot2 while maintaining a specified distance.
+
+    Parameters:
+    robot (PepperVirtual): The first robot instance.
+    robot_2 (PepperVirtual): The second robot instance to move towards.
+
+    Returns:
+    None
+    """
     distance = 0.5
     current_position_robot1 = robot.getPosition()
     current_position_robot2 = robot_2.getPosition()
@@ -23,12 +33,30 @@ def calculate_robot_moves(robot, robot_2) -> None:
     robot.moveTo(new_robot1_position[0], new_robot1_position[1], 0, speed=0.1, _async=True)
 
 
-def calculate_distance(position1, position2):
+def calculate_distance(position1, position2) -> np.array:
+    """
+    Calculates the Euclidean distance between two points in space.
+
+    Parameters:
+    position1 (tuple): The x, y, z coordinates of the first point.
+    position2 (tuple): The x, y, z coordinates of the second point.
+
+    Returns:
+    np.array: The Euclidean distance between the two points.
+    """
     return np.linalg.norm(np.array(position1) - np.array(position2))
 
 
 def arms(pepper) -> None:
-    # Угол, на который нужно опустить руки
+    """
+    Lowers both arms of a Pepper robot to a specified angle.
+
+    Parameters:
+    pepper (PepperVirtual): The instance of the Pepper robot.
+
+    Returns:
+    None
+    """
     angle = 1.5
 
     # Опускаем правую руку
@@ -39,6 +67,19 @@ def arms(pepper) -> None:
 
 
 def check_who_can_talk(pepper1, pepper2, pepper3, threshold, user_input) -> bool:
+    """
+    Checks which pairs of Pepper robots are close enough to each other to talk, based on a distance threshold and user input.
+
+    Parameters:
+    pepper1 (PepperVirtual): The first Pepper robot instance.
+    pepper2 (PepperVirtual): The second Pepper robot instance.
+    pepper3 (PepperVirtual): The third Pepper robot instance.
+    threshold (float): The maximum distance between robots to be considered able to talk.
+    user_input (str): The user's input specifying which robots they want to check for communication ability.
+
+    Returns:
+    bool: True if the specified robots can talk, False otherwise.
+    """
     positions = [pepper1.getPosition(), pepper2.getPosition(), pepper3.getPosition()]
     talking_pairs = []
     for i in range(3):
@@ -70,42 +111,20 @@ def check_who_can_talk(pepper1, pepper2, pepper3, threshold, user_input) -> bool
             return False
 
 
-# def check_who_can_talk(pepper1, pepper2, pepper3, threshold, user_input) -> list:
-#     positions = [pepper1.getPosition(), pepper2.getPosition(), pepper3.getPosition()]
-#     talking_pairs = []
-#     for i in range(3):
-#         for j in range(i+1, 3):
-#             distance = calculate_distance(positions[i], positions[j])
-#             if distance < threshold:
-#                 # Add pair of robots that can talk to the list
-#                 talking_pairs.append((i+1, j+1))
-
-#     if len(talking_pairs) > 3:
-#         print("All three are talking")
-
-#     else:
-#         try:
-#             robot1, robot2 = map(int, user_input.split(' and '))
-#             if robot1 in [1, 2, 3] and robot2 in [1, 2, 3]:
-#                 robots = [pepper1, pepper2, pepper3]
-#                 if (robot1, robot2) in talking_pairs or (robot2, robot1) in talking_pairs:
-#                     for _ in [pepper1, pepper2, pepper3]:
-#                         # Perform an action if the distance is less than the threshold
-#                         print(f"Robots {robot1} and {robot2} are can talking.")
-#                     return True
-#                 else:
-#                     print(f"Robots {robot1} and {robot2} cannot talk.")
-#                     return False
-#             else:
-#                 print("Invalid input. Enter the numbers of two robots from 1 to 3, separated by ' and '.")
-#                 return False
-#         except ValueError:
-#             print("Invalid input. Enter the numbers of two robots, separated by ' and '.")
-#             return False
-
-
-
 def talk(pepper1, pepper2, pepper3, talking_pairs, user_input) -> None:
+    """
+    Facilitates communication between specified pairs of Pepper robots based on user input.
+
+    Parameters:
+    pepper1 (PepperVirtual): The first Pepper robot instance.
+    pepper2 (PepperVirtual): The second Pepper robot instance.
+    pepper3 (PepperVirtual): The third Pepper robot instance.
+    talking_pairs (list): A list of tuples representing pairs of robots that can talk.
+    user_input (str): The user's input specifying which robots should talk.
+
+    Returns:
+    None
+    """
     if user_input == "Все":
         print("All Robots are talking")
 
@@ -119,7 +138,17 @@ def talk(pepper1, pepper2, pepper3, talking_pairs, user_input) -> None:
 
 
 def commands(pepper1, pepper2, pepper3) -> None:
-    # Dictionary to store robots
+    """
+    Processes user commands to control the movement and interaction of three Pepper robots.
+
+    Parameters:
+    pepper1 (PepperVirtual): The first Pepper robot instance.
+    pepper2 (PepperVirtual): The second Pepper robot instance.
+    pepper3 (PepperVirtual): The third Pepper robot instance.
+
+    Returns:
+    None
+    """
     robots = {
         '1': pepper1,    
         '2': pepper2,
@@ -155,25 +184,33 @@ def commands(pepper1, pepper2, pepper3) -> None:
 
 
 def main() -> None:
-        cwd = os.getcwd()
-        os.chdir(cwd)
+    """
+    The main function that initializes the simulation environment, loads three Pepper robots, sets their initial positions, lowers their arms, and starts processing user commands.
 
-        simulation_manager = SimulationManager()
-        client_id = simulation_manager.launchSimulation(gui=True)
+    Returns:
+    None
+    """
+    cwd = os.getcwd()
+    os.chdir(cwd)
 
-        pepper1 = PepperVirtual()
-        pepper2 = PepperVirtual()
-        pepper3 = PepperVirtual()
+    simulation_manager = SimulationManager()
+    client_id = simulation_manager.launchSimulation(gui=True)
 
-        pepper1.loadRobot(translation=[-1, 1, 0], quaternion=[0, 0, 0, 1], physicsClientId=client_id)
-        pepper2.loadRobot(translation=[0, 0, 0], quaternion=[0, 0, 0, 1], physicsClientId=client_id)
-        pepper3.loadRobot(translation=[2, 1, 0], quaternion=[0, 0, 0, 1], physicsClientId=client_id)
+    pepper1 = PepperVirtual()
+    pepper2 = PepperVirtual()
+    pepper3 = PepperVirtual()
 
-        peper_list = [pepper1, pepper2, pepper3]
+    pepper1.loadRobot(translation=[-1, 1, 0], quaternion=[0, 0, 0, 1], physicsClientId=client_id)
+    pepper2.loadRobot(translation=[0, 0, 0], quaternion=[0, 0, 0, 1], physicsClientId=client_id)
+    pepper3.loadRobot(translation=[2, 1, 0], quaternion=[0, 0, 0, 1], physicsClientId=client_id)
 
-        for k in peper_list:
-            arms(k)
+    peper_list = [pepper1, pepper2, pepper3]
 
-        commands(pepper1, pepper2, pepper3)
+    for k in peper_list:
+        arms(k)
 
-main()
+    commands(pepper1, pepper2, pepper3)
+
+
+if __name__ == "__main__":
+    main()
