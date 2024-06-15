@@ -12,7 +12,7 @@
 
 1. Clone the repo: 
 ```
-git clone 
+git clone https://github.com/MrBasten/Robot-Theater.git
 ```
 
 2. Conda install the environment: `pybullet_env.yml` or refer to list of dependencies required in **.yml** file.
